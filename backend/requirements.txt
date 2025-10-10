@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+httpx
+python-dotenv
+readability-lxml
+diskcache
+google-generativeai
+huggingface-hub
+beautifulsoup4
+lxml
+python-multipart

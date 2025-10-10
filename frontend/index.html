@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Researcher Agent</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0d1117;
+      color: #f0f6fc;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      color: #58a6ff;
+    }
+    #container {
+      max-width: 800px;
+      margin: auto;
+    }
+    input {
+      width: 70%;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+    button {
+      padding: 10px 20px;
+      background: #238636;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2ea043;
+    }
+    .section {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #161b22;
+    }
+    .link {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>🔍 AI Researcher Agent</h1>
+    <p>Enter your topic below to get a summarized research overview.</p>
+
+    <input id="query" type="text" placeholder="e.g. Artificial Intelligence in healthcare" />
+    <button onclick="fetchData()">Search</button>
+
+    <div class="section" id="summary"></div>
+    <div class="section" id="results"></div>
+    <div class="section" id="suggestions"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
