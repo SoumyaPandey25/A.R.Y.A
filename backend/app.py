@@ -16,12 +16,21 @@ app.add_middleware(
 def research_topic(query: str = Query(..., description="Enter your research query")):
     try:
         search_results = search_web(query)
-
         summary_data = summarize_results(query, search_results)
+
+        if summary_data.get("vague"):
+            return {
+                "query": query,
+                "results": None,
+                "summary": "",
+                "message": "Your query is too broad. Use a suggestion to refine it.",
+                "suggestions": summary_data.get("suggestions", []),
+                "verified": None,
+                "reliable": False
+            }
+
         summary_text = summary_data.get("summary", "")
-
         verification = verify_summary(query, summary_text)
-
 
         return {
             "query": query,
@@ -32,13 +41,9 @@ def research_topic(query: str = Query(..., description="Enter your research quer
                 if "broad" in summary_text.lower() or len(search_results) > 3 else
                 "Here are your refined research insights."
             ),
-            "suggestions": [
-                f"Try being more specific about '{query}'",
-                f"Look for '{query} latest research 2025'",
-                f"Explore '{query} industry reports or case studies 2025'"
-            ],
+            "suggestions": summary_data.get("suggestions", []),
             "verified": verification,
-            "reliable": True
+            "reliable": summary_data.get("reliable", True)
         }
 
     except Exception as e:
