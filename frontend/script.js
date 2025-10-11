@@ -190,7 +190,8 @@ async function performSearch() {
   hideResultSections();
   
   try {
-    const response = await fetch(`http://127.0.0.1:8000/research?query=${encodeURIComponent(query)}`);
+    const response = await fetch(`https://a-r-y-a.onrender.com/research?query=${encodeURIComponent(query)}`);
+
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
