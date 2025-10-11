@@ -1,66 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Researcher Agent</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0d1117;
-      color: #f0f6fc;
-      margin: 0;
-      padding: 2rem;
-    }
-    h1 {
-      color: #58a6ff;
-    }
-    #container {
-      max-width: 800px;
-      margin: auto;
-    }
-    input {
-      width: 70%;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      outline: none;
-    }
-    button {
-      padding: 10px 20px;
-      background: #238636;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #2ea043;
-    }
-    .section {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      background: #161b22;
-    }
-    .link {
-      color: #58a6ff;
-      text-decoration: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARYA - AI Research Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="container">
-    <h1>🔍 AI Researcher Agent</h1>
-    <p>Enter your topic below to get a summarized research overview.</p>
-
-    <input id="query" type="text" placeholder="e.g. Artificial Intelligence in healthcare" />
-    <button onclick="fetchData()">Search</button>
-
-    <div class="section" id="summary"></div>
-    <div class="section" id="results"></div>
-    <div class="section" id="suggestions"></div>
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Welcome to ARYA</h2>
+      <div class="auth-tabs">
+        <button class="tab-btn active" onclick="showLogin()">Login</button>
+        <button class="tab-btn" onclick="showSignup()">Sign Up</button>
+      </div>
+      
+      <form id="loginForm" class="auth-form">
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Password" required>
+        <button type="submit" class="auth-btn">Login</button>
+      </form>
+      
+      <form id="signupForm" class="auth-form hidden">
+        <input type="text" placeholder="Full Name" required>
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Password" required>
+        <button type="submit" class="auth-btn">Sign Up</button>
+      </form>
+    </div>
   </div>
+
+  <div id="app" class="hidden">
+    <nav class="navbar">
+      <div class="nav-left">
+        <img src="cut.png" alt="ARYA Logo" class="logo">
+        <h1 class="app-title">ARYA</h1>
+      </div>
+      <div class="nav-right">
+        <button id="newChatBtn" class="new-chat-btn">+ New Chat</button>
+        <button id="themeToggle" class="theme-toggle">
+          <svg class="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        </button>
+        <div class="user-profile" onclick="toggleUserMenu()">
+          <div class="avatar">U</div>
+          <div class="user-menu hidden">
+            <div class="user-info">
+              <span id="userName">User</span>
+              <span id="userEmail">user@example.com</span>
+            </div>
+            <button onclick="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-container">
+      <button id="floatingToggle" class="floating-toggle hidden" onclick="toggleSidebar()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+      
+      <aside id="chatSidebar" class="chat-sidebar">
+        <div class="sidebar-header">
+          <h3>Chat History</h3>
+          <button id="toggleSidebar" class="toggle-btn">←</button>
+        </div>
+        <div class="chat-content">
+          <div id="chatList" class="chat-list"></div>
+        </div>
+      </aside>
+
+      <main class="central-panel">
+        <div id="welcomeScreen" class="welcome-screen">
+          <div class="welcome-content">
+            <h1>Welcome to ARYA</h1>
+            <p>Your Automated Research & Yielding Agent</p>
+            <p class="subtitle">Ask anything and get comprehensive, verified research results</p>
+          </div>
+        </div>
+
+        <div class="search-container">
+          <div class="search-box">
+            <input type="text" id="queryInput" placeholder="What would you like to research today?" />
+            <button id="searchBtn" onclick="performSearch()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="resultsContainer" class="results-container hidden">
+          <div id="loadingAnimation" class="loading-container hidden">
+            <div class="loading-spinner"></div>
+            <p>Researching your query...</p>
+          </div>
+
+          <section id="summarySection" class="result-section">
+            <h2>Summary</h2>
+            <div id="summaryContent" class="content-card"></div>
+          </section>
+
+          <section id="sourcesSection" class="result-section">
+            <h2>Top Sources</h2>
+            <div id="sourcesContent" class="sources-grid"></div>
+          </section>
+
+          <section id="suggestionsSection" class="result-section">
+            <h2>Related Research</h2>
+            <div id="suggestionsContent" class="suggestions-list"></div>
+          </section>
+
+          <section id="researchHistorySection" class="result-section hidden">
+            <div class="section-header">
+              <h2>Research History</h2>
+              <button id="minimizeHistory" class="minimize-btn" onclick="toggleResearchHistory()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+            </div>
+            <div id="researchHistory" class="research-history"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
 
   <script src="script.js"></script>
 </body>
